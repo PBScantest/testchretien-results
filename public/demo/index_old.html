@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scantest Results - AI Powered</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #1a365d;    
+            --accent-color: #facc15;     
+            --secondary-blue: #0891b2;   
+            --bg-color: #ffffff;         
+            --text-color: #1e293b;       
+            --soft-gray: #f1f5f9;        
+            --border-color: #e2e8f0;     
+            --bar-fill-color: linear-gradient(90deg, #1a365d, #0891b2);
+            --chat-user-bg: #1a365d;
+            --chat-ai-bg: #f8fafc;
+            --ai-gradient: linear-gradient(135deg, #1a365d, #0891b2, #facc15);
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0; padding: 20px;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        #intro-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #ffffff; z-index: 99999; display: flex;
+            justify-content: center; align-items: center; transition: opacity 0.8s ease-out;
+        }
+        #intro-screen.hidden { opacity: 0; pointer-events: none; }
+        #intro-video { width: 260px; height: 260px; object-fit: cover; border-radius: 15px; }
+
+        header {
+            width: 100%; max-width: 1200px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 10px 20px 10px; border-bottom: 1px solid var(--border-color);
+            margin-bottom: 30px;
+        }
+        header img { max-height: 60px; }
+
+        .btn-calendly {
+            background-color: var(--primary-color); border: 2px solid var(--primary-color);
+            color: #ffffff; padding: 10px 20px; border-radius: 6px;
+            text-decoration: none; font-weight: 700; font-size: 0.9rem; text-transform: uppercase;
+        }
+
+        .container { display: flex; width: 100%; max-width: 1200px; gap: 40px; align-items: flex-start; }
+        .left-panel { flex: 1; max-width: 550px; display: flex; flex-direction: column; }
+        #items-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+
+        .score-item {
+            cursor: pointer; background-color: var(--soft-gray);
+            border-radius: 12px; padding: 15px; border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .score-item:hover { transform: translateX(5px); border-color: var(--secondary-blue); }
+        .score-item.active { background-color: #fff; border: 1px solid var(--secondary-blue); box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+
+        .score-text { 
+            display: flex; justify-content: space-between; align-items: center;
+            font-weight: 700; font-size: 0.85rem; color: var(--primary-color); 
+            margin-bottom: 8px; text-transform: uppercase; gap: 20px; 
+        }
+        .score-text span:first-child { flex: 1; }
+        .score-text span:last-child { white-space: nowrap; }
+        .toggle-icon { display: none; }
+
+        .score-bar { width: 100%; background-color: #cbd5e1; height: 12px; border-radius: 10px; overflow: hidden; }
+        .score-fill { height: 100%; background: var(--bar-fill-color); width: 0%; transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1); }
+
+        .mobile-desc {
+            max-height: 0; overflow: hidden; opacity: 0;
+            transition: all 0.5s ease-in-out; font-size: 0.95rem; line-height: 1.6;
+        }
+
+        .right-panel {
+            flex: 1.5; position: sticky; top: 20px; height: calc(100vh - 40px); 
+            background: rgba(255, 255, 255, 0.98); border: 1px solid var(--border-color);
+            border-radius: 30px; padding: 30px; display: flex; flex-direction: column;
+            overflow: hidden; box-sizing: border-box;
+        }
+
+        #standard-content { overflow-y: auto; height: 100%; padding-right: 5px; transition: opacity 0.3s ease; flex: 1; }
+        #desktop-chat-container { height: 100%; width: 100%; display: none; flex-direction: column; flex: 1; min-height: 0; }
+
+        #explicationtendance {
+            display: inline-block; padding: 4px 10px; font-weight: 600;
+            background: linear-gradient(90deg, #0f7f89, #38d8e8); color: #222;
+            border-radius: 4px; margin-bottom: 20px; text-transform: uppercase;
+        }
+
+        .ai-controls { margin-top: 10px; width: 100%; display: flex; flex-direction: column; gap: 25px; }
+        
+        .btn-ai {
+            background: var(--ai-gradient); border: none; padding: 15px;
+            border-radius: 20px; color: white; font-weight: 700; width: 100%; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(26, 54, 93, 0.2); transition: transform 0.2s;
+        }
+        .btn-ai:hover { transform: scale(1.02); }
+        .btn-ai:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .btn-payment {
+            background: #68F787; border: none; padding: 15px; border-radius: 20px;
+            color: #1a365d; font-weight: 700; font-family: 'Montserrat', sans-serif;
+            width: 100%; cursor: pointer; box-shadow: 0 4px 15px rgba(104, 247, 135, 0.3);
+            transition: transform 0.2s; font-size: 1rem; display: flex;
+            justify-content: center; align-items: center; gap: 8px;
+        }
+        .btn-payment:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(104, 247, 135, 0.5); }
+
+        #chat-interface { display: none; flex-direction: column; width: 100%; height: 100%; }
+        #chat-history {
+            flex: 1; display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px;
+            overflow-y: auto; padding: 10px; background: var(--soft-gray); border-radius: 15px;
+        }
+        .chat-message { padding: 12px 18px; border-radius: 15px; max-width: 100%; line-height: 1.5; font-size: 0.95rem; animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .user-message { align-self: flex-end; background-color: var(--chat-user-bg); color: white; border-bottom-right-radius: 2px; }
+        .ai-message { align-self: flex-start; background-color: var(--chat-ai-bg); color: #2E2735; border-bottom-left-radius: 2px; border: 1px solid var(--border-color); }
+        .chat-input-area { display: flex; gap: 10px; padding: 10px 0; border-top: 1px solid var(--border-color); flex-shrink: 0; }
+        #user-input { flex: 1; border: 1px solid var(--border-color); border-radius: 20px; padding: 10px 15px; font-family: 'Montserrat', sans-serif; }
+        #user-input:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-send { background: var(--primary-color); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; color: white; display: flex; justify-content: center; align-items: center; transition: 0.3s; }
+        .btn-send:disabled { opacity: 0.5; cursor: not-allowed; }
+        .typing-indicator { display: inline-flex; gap: 4px; padding: 5px 10px; }
+        .typing-dot { width: 6px; height: 6px; background: #ccc; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+
+        .error-message {
+            background-color: #fee; border-left: 4px solid #c00; padding: 12px; 
+            border-radius: 8px; margin: 10px 0; color: #c00; font-size: 0.9rem;
+        }
+
+        @media (max-width: 900px) {
+            .container { flex-direction: column; align-items: center; gap: 20px; }
+            .right-panel { display: none; } 
+            .left-panel { max-width: 100%; width: 100%; }
+            .score-item.active .mobile-desc {
+                max-height: 2000px; opacity: 1; margin-top: 15px; padding-top: 15px;
+                border-top: 1px solid var(--border-color);
+            }
+            .toggle-icon {
+                display: inline-block; color: var(--secondary-blue);
+                font-size: 0.8rem; transition: transform 0.3s ease;
+            }
+            .score-item.active .toggle-icon { transform: rotate(180deg); }
+            #chat-interface.mobile-fullscreen {
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                z-index: 99999; background-color: #fff; margin: 0;
+                padding: 20px; box-sizing: border-box; border: none;
+                animation: slideUp 0.3s ease-out;
+            }
+            @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        }
+    </style>
+</head>
+<body>
+    <div id="intro-screen">
+        <video id="intro-video" src="ecran-daccueil/ecran.mp4" autoplay muted playsinline></video>
+    </div>
+
+    <header>
+        <a href="../index.html" ><img src="assets/scan-test-logo2.png" alt="Logo"></a>
+        <a href="https://calendly.com/contact-5892/30min" target="_blank" rel="noopener noreferrer" class="btn-calendly">Contacter un pro</a>
+    </header>
+
+    <div class="container">
+        <div class="left-panel">
+            <h1 id="name"></h1>
+            <div id="items-list"></div>
+            <div class="ai-controls">
+                <button class="btn-ai" onclick="demarrerChatSynthese()" id="btn-synthese">✨ Synthèse Globale par IA</button>
+                <button class="btn-payment" onclick="goToPayment()" id="PaymentButton">
+                    👩‍💻 Je passe le test
+                </button>
+            </div>
+            <div id="mobile-chat-container"></div>
+        </div>
+
+        <div class="right-panel">
+            <div id="standard-content">
+                <span id="explicationtendance"></span>
+                <h2 id="explicationtitre">Cliquez sur une tendance</h2>
+                <div id="explicationparagraphe">Les détails apparaîtront ici.</div>
+            </div>
+            <div id="desktop-chat-container"></div>
+        </div>
+    </div>
+
+    <div id="chat-interface-template" style="display:none;">
+        <div id="chat-interface">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                <span style="font-weight:bold;">Coach IA</span>
+                <button onclick="fermerChat()">✖ Fermer</button>
+            </div>
+            <div id="chat-history"></div>
+            <div class="chat-input-area">
+                <input type="text" id="user-input" placeholder="Posez une question...">
+                <button class="btn-send" onclick="handleUserMessage()">➜</button>
+            </div>
+            <p style="font-size:0.75rem; color:var(--text-color); margin-top:5px; text-align:center; flex-shrink:0;"><b>Note :</b> IA version bêta - ne remplace pas un professionnel. <br>Bénéficiez d'un coaching sur mesure avec <a href="https://calendly.com/contact-5892/30min" target="_blank">Pierre Bagnoly</a></p>
+    </div>
+
+<script>
+const API_ENDPOINT = '/api/chat_free';
+let chatContext = [];
+let isChatActive = false;
+let isProcessing = false;
+
+
+function sanitizeInput(input) {
+    if (!input || typeof input !== 'string') return '';
+    return input.replace(/[<>\"\']/g, '').substring(0, 100).trim();
+}
+
+function validateScore(value) {
+    const num = parseFloat(value);
+    return !isNaN(num) && num >= 0 && num <= 20 ? num : null;
+}
+
+async function callSecureChat(userMessage, systemInstruction = "") {
+    try {
+        const response = await fetch(API_ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                message: userMessage,
+                systemInstruction: systemInstruction,
+                context: chatContext
+            }),
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Erreur serveur');
+        }
+
+        const data = await response.json();
+        return data.response;
+    } catch (error) {
+        console.error('API Error:', error);
+        throw error;
+    }
+}
+
+
+// Mapping titre normalisé -> clé EXPLICATIONS
+const TITRE_TO_KEY = {
+  "Ambition et compétition relationnelle": 1,
+  "Penchant pour la solitude et l’effacement": 2,
+  "Attitude directive et de contrôle": 3,
+  "Tendance à l’auto sabotage": 4,
+  "Besoin d’indépendance et d’anticonformisme": 5,
+  "Conscience de soi et affirmation de sa valeur": 6,
+  "Énergie et motivation pour entreprendre": 7,
+  "Perfectionnisme et rigorisme": 8,
+  "Sentiment d’Insécurité et besoin de prévoyance": 9,
+  "Sensibilité affective et émotionnelle": 10,
+  "Volonté d’apprendre et de se développer": 11
+};
+
+const EXPLICATIONS = {
+  1: { ranges: [{ min: 0, max: 5, titre: "Ambition et compétition relationnelle", texte: `Cet indicateur vous informe sur votre ambition personnelle et votre penchant à entrer dans une compétition relationnelle contrairement à une attitude qui vise à être authentique et à rechercher l’intérêt collectif.\n\nSelon vos résultats vous êtes une personne authentique qui se présente sans masque ni maquillage pour tromper les autres. Vous n’imaginez pas user de déguisement pour dissimuler votre personnalité et vos intentions. Attention de ne pas être trop naïf dans vos relations avec les autres, accordez votre confiance, mais restez vigilant pour ne pas être trompé par une personne mal intentionnée. Tout le monde n’aime pas la transparence comme vous.\n\nQuelques conseils et recommandations :\nSoyez prudent et appliquez-vous à discerner les motivations des personnes qui vous entourent. Faites preuve de sagesse pour ne pas vous laisser avoir par des escrocs qui voudraient abuser de votre générosité. Vous ne voyez pas le mal et ne soupçonnez pas qu’il y ait des personnes avec des mauvaises intentions pourtant il existe des manipulateurs, qui ont un fonctionnement à l’opposé du votre, on parle alors de rivalité fraternelle.\n\n"Une personne naïve est une personne pure qui ne voit que le bon côté de chacun. La bonté est imprégnée dans son être et il peut ainsi voir le meilleur de chaque personne", sans soupçonner la malice. Une telle pureté, qui préfère ne voir que le bon côté de ses semblables peut être dangereuse si elle est naïve.` }, { min: 5.01, max: 10, titre: "Ambition et compétition relationnelle", texte: `Cet indicateur vous informe sur votre ambition personnelle et votre penchant à entrer dans une compétition relationnelle contrairement à une attitude qui vise à être authentique et à rechercher l’intérêt collectif. \nSelon vos résultats vous êtes un peu en dessous de la moyenne de la population, vous ne faites pas partie de tous ceux qui jouent un peu un rôle de composition par nécessité au travail ou dans la famille. \nVous êtes modeste et franc, capable d’endosser un costume et de rentrer dans un rôle social que l’on vous demande de jouer. Cela ne fait quand même pas de vous un manipulateur enflammé par une ambition dévorante. Retenons que la vie est un jeu, et que le respect des joueurs en est une règle. \nDans le domaine des relations affectives, la naïveté est plus fréquente. Même si la personne est émotionnellement équilibrée, le fait d'être amoureux la rend naïve à un moment donné de la relation. \n\nIl est facile d'identifier une personne qui agit de manière naïve, mais qu'en est-il lorsque nous sommes trop naïfs ? Par ailleurs, il est difficile de percevoir cet état émotionnel lorsque vous êtes le personnage principal de votre scénario, et que vous voyez tout en "rose", sans aucun mal, croyant toujours au meilleur des gens, étant même incapable de faire du mal à quelqu'un. \nLa personne trop naïve crée une réalité déformée et vit intensément son jeu, attirant pour elle-même une légion d'admirateurs qui peuvent aussi être naïf ou intéressés et agréables. Vous pouvez retrouver le sens de la réalité sans voir le mal partout dans les intentions et les actes. Vous pouvez changer et comprendrez enfin la différence entre simplicités et être naïveté. \nConseils et recommandations :\nL'un des avantages de ce fonctionnement peut être la motivation et la détermination à réussir. Les personnes qui se voient en compétition constante avec les autres peuvent être très motivées pour atteindre leurs objectifs et surpasser leurs rivaux. Cette compétitivité peut les pousser à travailler dur et à se surpasser, ce qui peut conduire à des réalisations remarquables.\nApprenez à faire confiance aux autres et à partager les victoires.` }, { min: 10.01, max: 15, titre: "Ambition et compétition relationnelle", texte: `Cet indicateur vous informe sur votre ambition personnelle et votre penchant à entrer dans une compétition relationnelle contrairement à une attitude qui vise à être authentique et à rechercher l’intérêt collectif. \nSelon vos résultats vous vous connaissez bien et savez mieux que nous tous, toutes les pensées intimes que vous êtes capable d’entretenir pour arriver à vos fins. Utilisez votre ambition avec prudence et modération. Considérez que se comparer aux autres n’est pas une finalité. Faites usage de vos capacités à jouer des rôles de composition dans le but de faire avancer le bien commun d’une équipe ou d’une société. Veillez à ne pas tomber dans des luttes de rivalité, mais apportez au contraire votre énergie et vos talents pour l’intérêt général. Si vous aimez les défis, alors pratiquez régulièrement l’exercice de la transparence, de l’authenticité, du respect et de la solidarité et vous serez heureux.\nConseils et recommandations :\nAvancez avec confiance et efforcez-vous de faire connaitre vos projets, de communiquer et d’apprendre à développer des collaborations.` }, { min: 15.01, max: 20, titre: "Ambition et compétition relationnelle", texte: `Cet indicateur vous informe sur votre ambition personnelle et votre penchant à entrer dans une compétition relationnelle contrairement à une attitude qui vise à être authentique et à rechercher l’intérêt collectif. \nSelon vos résultats vous semblez être prêt à tout pour réussir, vous avez l’art de savoir composer le personnage que l’on attend de rencontrer. \nVotre ambition est certaine et vous êtes prêt à vous investir pour arriver à atteindre vos objectifs. \nVotre caractère est marqué par la discrétion, vos motivations profondes ne sont pas toujours visibles. Vous savez avancer sans vous dévoiler complètement. \nCependant, il y a aussi des inconvénients à avoir un tel fonctionnement dans les relations humaines. La rivalité fraternelle peut entraîner une atmosphère de tension et de méfiance dans les interactions avec les autres. Les personnes qui se voient constamment en compétition peuvent avoir du mal à établir des relations authentiques et à faire confiance aux autres, car elles sont souvent préoccupées par leur propre succès et leur propre image.\n\nConseils et recommandations :\nAttention à ne pas laisser votre égo vous emporter dans des plans machiavéliques. \nEvitez de trop vous comparer aux autres et de devenir jaloux, vous serez d’autant plus apprécié que vous jouerez le jeu d’avancer en considérant l’intérêt des forces qu’il y a dans les équipiers qui vous entourent. \nAvancez en faisant des efforts d’authenticité et vous y gagnerez et les autres aussi.` }] },
+  2: { ranges: [{ min: 0, max: 5, titre: "Penchant pour la solitude et l’effacement", texte: `Cet indicateur mesure votre tendance à rechercher la solitude aux dépens de développer des relations avec les autres et d’être peu ou pas communicant.\nSelon vos résultats vous laissez penser que vous n’êtes vraiment pas solitaire et que vous êtes plutôt relationnel et solidaire avec les autres, vous avez certainement de l’empathie et aimez les échanges avec les autres. \nDes conseils et des suggestions\nApprenez aussi à vous mettre à part et à vous concentrer sur des tâches et des activités, l’abondance des relations ne garantit pas le bonheur.` }, { min: 5.01, max: 10, titre: "Penchant pour la solitude et l’effacement", texte: `Cet indicateur mesure votre tendance à rechercher la solitude aux dépens de développer des relations avec les autres et d’être peu ou pas communicant.\nSelon vos résultats vous êtes volontaire pour aller vers les autres. Vous êtes en dessous de la moyenne sociale et vous avez encore de la marge pour devenir une meilleure version de vous-même et apprendre à développer des relations avec les autres. Réalisez que toute notre vie est impactée par les rencontres que l’on fait ou que l’on ne fait pas. \nDes conseils et des suggestions\nSachez mesurer le juste équilibre entre les relations et les temps d’introspection qui sont aussi nécessaire.` }, { min: 10.01, max: 15, titre: "Penchant pour la solitude et l’effacement", texte: `Cet indicateur mesure votre tendance à rechercher la solitude aux dépens de développer des relations avec les autres et d’être peu ou pas communicant. \nSelon vos résultats vous montrez une tendance à l’insularité, vous ne mesurez pas toujours le poids de votre absence de communication dans vos relations avec les autres ni leurs conséquences. Certainement vous avez besoin de vous sentir tranquille et de vous retrouver seul dans le calme pour vous renouveler et vous sentir dans votre énergie, mais donnez-vous aussi les moyens pour aller vers les autres et vous entraîner à développer des capacités pour entrer en relation avec eux et les maintenir par des échanges de qualité et qu’ils soient réguliers. \n\nDes conseils et des suggestions\nIl est important de trouver un équilibre entre le temps passé seul et le temps passé en compagnie des autres. Les relations humaines sont essentielles pour le bien-être global et la satisfaction de chacun. Trouver des activités sociales qui correspondent aux intérêts et aux besoins individuels peut aider à maintenir des relations saines et épanouissantes.` }, { min: 15.01, max: 20, titre: "Penchant pour la solitude et l’effacement", texte: `Cet indicateur mesure votre tendance à rechercher la solitude aux dépens de développer des relations avec les autres et d’être peu ou pas communicant. Selon vos résultats nous attirons votre attention sur le fait qu’un comportement solitaire excessif peut conduire à l'isolement social et à la solitude. L'isolement social peut avoir des effets néfastes sur la santé mentale et physique, augmentant le risque de dépression, d'anxiété et de problèmes de santé.\n\nDes conseils et des suggestions\nIl y a des inconvénients à adopter un comportement solitaire. Le fait de se retirer socialement peut entraîner une diminution de la satisfaction relationnelle et de la qualité des relations partagées. Les interactions sociales sont importantes pour le bien-être émotionnel et peuvent contribuer à la construction de liens solides avec les autres.\nEn résumé, le comportement solitaire peut offrir des avantages tels que la possibilité de se ressourcer et de se recentrer sur soi-même, mais il peut également avoir des inconvénients tels qu'une diminution de la satisfaction relationnelle et un risque accru d'isolement social. Trouver un équilibre entre le temps passé seul et le temps passé avec les autres est essentiel pour maintenir des relations saines et épanouissantes` }] },
+  3: { ranges: [{ min: 0, max: 5, titre: "Attitude directive et de contrôle", texte: `Ce test mesure votre tendance à vouloir contrôler et diriger les autres et à aimer montrer publiquement une ascendance sur eux contrairement à avoir une attitude collaborative et empathique. \nSelon vos résultats vous êtes plutôt du genre respectueux, et animé d’une bienveillance jusqu’à montrer de l’empathie. Peut-être même qu’avec cette haute considération des autres, vous vous interdisez de prendre trop de contrôle sur eux et même d’être directif malgré que votre fonction ou votre rôle professionnel l’exige. Vous êtes plutôt flexible et capable d’écoute et d’adaptation, mais attention, que ce ne soit pas une fuite jusqu’au risque de ne pas assumer votre responsabilité et de fuir des situations qui ne sont pas forcément conflictuelles, mais qui nécessitent une saine confrontation. \n\nConseils et suggestions\nOn attend de vous que vous soyez capable d’exprimer une position claire et tranchée, dans la vie il faut s’affirmer, c’est un devoir, et une responsabilité que vous devez assumer.` }, { min: 5.01, max: 10, titre: "Attitude directive et de contrôle", texte: `Ce test mesure votre tendance à vouloir contrôler et diriger les autres et à aimer montrer publiquement une ascendance sur eux contrairement à avoir une attitude collaborative et empathique. \nSelon vos résultats, sur le plan relationnel, vous pouvez considérer aisément les points de vue qui sont différents des vôtres et comprendre des situations en les évaluant avec humanité sans porter de jugement ou de condamnation sévère. Vous abordez avec équilibre et respect les situations délicates en prenant des postures facilitant la communication et les échanges de point de vue.  \n\nConseils et suggestions\nN’hésitez pas à vous affirmer et à prendre parfois des décisions pour influencer les autres.` }, { min: 10.01, max: 15, titre: "Attitude directive et de contrôle", texte: `Ce test mesure votre tendance à vouloir contrôler et diriger les autres et à aimer montrer publiquement une ascendance sur eux contrairement à avoir une attitude collaborative et empathique. \nSelon vos résultats vous savez que l’on vous a déjà reproché d’être trop directif, voire accusateur et peut-être culpabilisateur. Votre sens du contrôle, et du commandement peut vite s’exprimer d’une manière froide. Vous exprimez des exigences au lieu de donner des suggestions et lancez des ordres au lieu de donner des conseils. Certains comportements nuancés à montrer avec tact dans les relations vous échappent et vous semblent inutiles. Appliquez-vous à montrer une autorité qui découle de votre compétence, plutôt qu’à être autoritaire en exerçant une forme de violence. Vous serez encore plus respecté et admiré quand vous développerez de l’empathie et de la bienveillance avec vos interlocuteurs.` }, { min: 15.01, max: 20, titre: "Attitude directive et de contrôle", texte: `Ce test mesure votre tendance à vouloir contrôler et diriger les autres et à aimer montrer publiquement une ascendance sur eux contrairement à avoir une attitude collaborative et empathique. \nSelon vos résultats, c’est le moment de devenir moins contrôlant. \nPour être moins contrôlant, vous devez d’abord reconnaître que les autres vous perçoivent comme étant contrôlant. Il peut être exceptionnellement difficile de reconnaître les comportements contrôlants chez soi parce que nous justifions ou rationalisons souvent nos propres comportements. \n« Le plus grand indicateur de votre contrôle est que votre partenaire exprime qu’il se sent contrôlé par vous. »\n\nUne fois que les comportements de contrôle ont été portés à votre attention, vous pouvez vous efforcer de les restructurer en actions plus bénéfiques pour les deux parties.` }] },
+  4: { ranges: [{ min: 0, max: 5, titre: "Tendance à l’auto sabotage", texte: `Ce test informe sur le poids des blessures ou des traumatismes intérieurs que vous avez pu vivre et leurs influences négatives dans votre vie aujourd’hui. \nIl mesure votre Tendance à l'auto sabotage à l’opposé de vouloir voir les choses positives et de rechercher à vous sentir bien. Selon vos résultats avec un score de 0 à 5 sur 20 vous confirmez qu’on a tous en nous des souvenirs du passé qui peuvent affecter notre quotidien, mais vous semblez avoir su faire le tri et avoir une perception positive de vous-même et de votre environnement pour ne pas charger votre mental ni vous laisser tirer vers le bas. En fait vous êtes plutôt de ceux qui sont positifs et qui fuient la souffrance, vous êtes à la recherche de ce qui vous fait du bien et non du mal. Vous êtes positif et optimiste, vous préférez investir pour votre bien-être que vous plaindre et ruminer des avis négatifs sur vous-même et la vie en général.` }, { min: 5.01, max: 10, titre: "Tendance à l’auto sabotage", texte: `Ce test informe sur le poids des blessures ou des traumatismes intérieurs que vous avez pu vivre et leurs influences négatives dans votre vie aujourd’hui. \nIl mesure votre Tendance à l'auto sabotage à l’opposé de vouloir voir les choses positives et de rechercher à vous sentir bien. Selon vos résultats Entre 6 et 10 sur 20, vous êtes en dessous de la moyenne sociale concernant les personnes qui vivent dans l’auto-sabotage et portent des souffrances. Vous avez encore de la marge pour devenir une meilleure version de vous-même et descendre votre score jusqu’à 0, cela peut passer par une introspection accompagnée par un professionnel pour comprendre ce qui a pu vous affecter et ce dont vous pouvez être libéré pour vous sentir mieux.` }, { min: 10.01, max: 15, titre: "Tendance à l’auto sabotage", texte: `Ce test informe sur le poids des blessures ou des traumatismes intérieurs que vous avez pu vivre et leurs influences négatives dans votre vie aujourd’hui. \nIl mesure votre Tendance à l'auto sabotage à l’opposé de vouloir voir les choses positives et de rechercher à vous sentir bien. Selon vos résultats si votre note est entre 10 et 15 sur 20 vous savez au fond de vous-même que vous portez des poids qui alourdissent votre quotidien et vous empêchent d’avancer, vous avez besoin de parler de ces choses douloureuses qui vous font mal et vous ralentissent. Pensez à investir en vous et profiter d’un accompagnement. L’important c’est aussi de s’écouter et de se voir tel que l’on est sans vivre dans le déni. On avance plus facilement dans la vie quand on a le cœur léger. Il y a des fardeaux qu’il vaut mieux déposer pour ne pas continuer de souffrir. Contactez-nous, si vous souhaitez en parler, on a des oreilles qui peuvent tout entendre.` }, { min: 15.01, max: 20, titre: "Tendance à l’auto sabotage", texte: `Ce test informe sur le poids des blessures ou des traumatismes intérieurs que vous avez pu vivre et leurs influences négatives dans votre vie aujourd’hui. \nIl mesure votre Tendance à l'auto sabotage à l’opposé de vouloir voir les choses positives et de rechercher à vous sentir bien. Selon vos résultats si votre score est entre 16 et 20 sur 20 vous portez en vous trop de souffrance, les malheurs de la vie vous ont abimés. \nVous pouvez même sentir que cette souffrance se transforme en vous en mal-être qui apparait visible dans votre style de vie. Vous exhibez ces blessures non pas comme des trophées pour vous en glorifier, mais comme les marques des évènements douloureux qui ont naturellement laissé sur vous des empreintes des situations difficiles qui vous ont atteintes. \nVous pouvez vous en sortir, avant que ces blessures s’installent dans votre personnalité.` }] },
+  5: { ranges: [{ min: 0, max: 5, titre: "Besoin d’indépendance et d’anticonformisme", texte: `Cet indicateur informe sur votre Besoin d’indépendance et d’anticonformisme contrairement à une recherche de la stabilité et du conformisme. Selon vos résultats vous évoluez comme une personne qui s’intègre facilement dans un groupe social, un système, un mode de fonctionnement déjà établi, vous êtes plutôt conformiste. Vous ne semblez pas porter le projet original d’une vie atypique qui sort des sentiers battus. Finalement vous aimez votre liberté, mais vous préférez un peu la sacrifier pour vivre en conformité avec les autres et vous acceptez de ne pas prendre le risque de vivre une vie atypique.` }, { min: 5.01, max: 10, titre: "Besoin d’indépendance et d’anticonformisme", texte: `Cet indicateur informe sur votre Besoin d’indépendance et d’anticonformisme contrairement à une recherche de la stabilité et du conformisme, selon vos résultats, vous êtes dans la moyenne de la population, vous acceptez de suivre le rythme et les règles que vous impose la société. En même temps vous savez que vous devez trouver votre place dans un système à travers un projet social commun. Votre amour de la liberté, et votre désir d’indépendance sont moyens et relativement nuancés. Votre désir d’indépendance pourrait vous conduire dans un style de vie qui serait original et atypique, mais seulement de manière ponctuelle sur des courtes périodes.\n\nOn vit dans un monde où il est facile de se laisser influencer par les opinions des autres, par les attentes sociales ou même par les idéaux collectifs. Mais ces influences peuvent être comme des chaînes invisibles qui vous éloignent de vous-même. Quand vous choisissez de suivre ce que vous croyez juste pour vous, vous commencez à vous libérer de cette pression extérieure. Et cette liberté est précieuse. Elle vous permet d’écouter votre propre voix, de faire des choix qui résonnent profondément avec votre essence, et de vivre une vie plus authentique et épanouie.` }, { min: 10.01, max: 15, titre: "Besoin d’indépendance et d’anticonformisme", texte: `Cet indicateur informe sur votre Besoin d’indépendance et d’anticonformisme contrairement à une recherche de la stabilité et du conformisme, selon vos résultats, vous êtes dans la moyenne des personnes qui forment la société et qui ont une forme d’indépendance et de singularité assez marquée.\nVous savez être indépendant dans vos choix de vie, ce n’est pas seulement une question de liberté, mais aussi d’harmonie avec vous-même. \nAvec un tel score, cela signifie : savoir prendre la responsabilité de sa propre trajectoire, d’agir selon ses valeurs, ses désirs et sa vérité, plutôt que de s’aligner sur ce que les autres attendent de vous ou sur des modèles préconçus. \nC’est un acte de courage et de respect envers qui vous êtes vraiment.\n\nJe voudrais vous parler, en toute sincérité, de l’importance de vivre selon vos propres choix, d’écouter vos désirs profonds et de respecter ce qui fait de vous une personne unique. La manière dont vous abordez vos décisions, vos actions et même vos relations peut avoir un impact considérable sur votre bien-être, et c’est dans le respect de votre singularité que vous trouverez, je crois, la véritable liberté.\n\nVivre en respectant votre propre individualité, c’est savoir faire des choix qui résonnent profondément avec vous, et non selon les attentes des autres. C’est un acte de courage, je ne vais pas le nier. Cela signifie parfois s’écarter des chemins tout tracés ou se détourner de la pression sociale qui pousse à toujours se conformer. Mais lorsque vous vous engagez sur ce chemin, vous vous offrez l’opportunité de vivre une vie qui vous ressemble, une vie qui vous donne satisfaction et sens.` }, { min: 15.01, max: 20, titre: "Besoin d’indépendance et d’anticonformisme", texte: `Cet indicateur informe sur votre Besoin d’indépendance et d’anticonformisme contrairement à une recherche de la stabilité et du conformisme, selon vos résultats, vous avez l’âme d’un aventurier épris de liberté. Vous considérez que votre droit à être différent est votre bien le plus précieux. Volontairement anticonformiste, vous vivez avec ce besoin d’exprimer qui vous êtes par les choix de votre vie et peut-être jusque dans des activités avec une expression artistique forte ou une vie originale, voire marginale, qui sort des conventions et des normes classiques.` }] },
+  6: { ranges: [{ min: 0, max: 5, titre: "Conscience de soi et affirmation de sa valeur", texte: `Cet indicateur informe sur la conscience que vous avez de vous-même et l’estime que vous vous a accordez contrairement à une basse estime des sentiments de dépréciation et des envies de vous mettre en retrait. \nCe test mesure quel degré d’estime vous vous accordez et quelle conscience vous avez de votre valeur.\nSelon vos résultats, vous avez besoin de prendre confiance en vous. Vous êtes une personne précieuse et peut-être que par les circonstances de la vie vous vous êtes oublié, négligé, ou dévalorisé sous l’influence de certains évènements ou de personnes qui n’étaient pas bienveillantes avec vous. Vous avez oublié de vivre pour vous-mêmes et de vous mettre en valeur.` }, { min: 5.01, max: 10, titre: "Conscience de soi et affirmation de sa valeur", texte: `Cet indicateur informe sur la conscience que vous avez de vous-même et l’estime que vous vous a accordez contrairement à une basse estime des sentiments de dépréciation et des envies de vous mettre en retrait. \nCe test mesure quel degré d’estime vous vous accordez et quelle conscience vous avez de votre valeur, selon vos résultats avec un score de 6 à 10 sur 20, \nVous êtes en dessous de la moyenne sociale et vous avez encore de la marge pour devenir une meilleure version de vous-même. Vous pouvez vous mettre en valeur et briller dans la société. La confiance en soi et l’estime de soi sont comme un carburant qui permet d’avancer. Parfois notre ambition sociale découle directement de l’image que l’on a de soi. Soyez ambitieux pour vous-même et les autres et partagez vos succès avec générosité.` }, { min: 10.01, max: 15, titre: "Conscience de soi et affirmation de sa valeur", texte: `Cet indicateur informe sur la conscience que vous avez de vous-même et l’estime que vous vous a accordez contrairement à une basse estime des sentiments de dépréciation et des envies de vous mettre en retrait. \nCe test mesure quel degré d’estime vous vous accordez et quelle conscience vous avez de votre valeur, selon vos résultats si votre note est entre 11 et 15 sur 20, vous montrez peut-être des excès de confiance en vous qui peuvent être interprétés par votre entourage comme de l’égocentrisme, ou du narcissisme, voire de la prétention. Certainement que vous avez une grande valeur et c’est bon que vous ayez une bonne image et une bonne estime de vous-même et c’est encore mieux quand cela s’exprime de façon proportionnelle à la considération et à la valeur que vous reconnaissez aussi aux autres.` }, { min: 15.01, max: 20, titre: "Conscience de soi et affirmation de sa valeur", texte: `Cet indicateur informe sur la conscience que vous avez de vous-même et l’estime que vous vous a accordez contrairement à une basse estime des sentiments de dépréciation et des envies de vous mettre en retrait. \nCe test mesure quel degré d’estime vous vous accordez et quelle conscience vous avez de votre valeur, selon vos résultats si votre note est entre 16 et 20 sur 20, votre assurance et votre confiance peuvent-être excessive, au point d’être interprété par votre entourage comme de la prétention, de la superbe, de l’orgueil. Attention au narcissisme qui peut nous jouer des mauvais tours. Recherchez la modestie comme un axe de progrès et de développement personnel. C’est une bonne chose que d’avoir confiance en soi, mais pensez aussi à avoir confiance aux autres en leur laissant de la place pour s’exprimer et briller. \n\nPour une personne qui aurait une confiance en elle excessive, qui serait imbue de sa personne et qui manifesterait une attitude de supériorité et de superbe, le résultat pourrait-être désastreux. Il est important de distinguer une saine confiance en soi d'une confiance excessive qui peut se transformer en arrogance et avoir des répercussions négatives sur la personne et son entourage.` }] },
+  7: { ranges: [{ min: 0, max: 5, titre: "Énergie et motivation pour entreprendre", texte: `Cet indicateur informe sur l’énergie que vous avez pour entreprendre et votre facilité pour passer à l’action contrairement à rester dans une attitude contemplative et réfléchie. Selon vos résultats avec un score entre 0 et 5 sur 20, prenez conscience que vous êtes le pilote de votre vie et que vous êtes d’abord le premier responsable de tout ce qui se réalisera dans votre vie. Projetez-vous vers l’avenir et investissez dans des programmes de développement personnel et de motivation qui vous permettront de vous connaitre et de vivre votre vie au maximum de votre potentiel. Si vous ne prenez pas de décisions pour changer de situation soyez certains que rien ne changera. Attention, ce n’est pas une fatalité ! Une personne qui manque d’énergie et d’initiative peut vraiment évoluer en changeant progressivement ses habitudes et son état d’esprit. Il suffit souvent d’un déclic, d’un objectif motivant ou d’un environnement stimulant pour retrouver l’envie d’avancer !` }, { min: 5.01, max: 10, titre: "Énergie et motivation pour entreprendre", texte: `Cet indicateur informe sur l’énergie que vous avez pour entreprendre et votre facilité pour passer à l’action contrairement à rester dans une attitude contemplative et réfléchie. Selon vos résultats avec un score entre 6 et 10 sur 20, votre énergie pour entreprendre, est en dessous de la moyenne de la population. Vous suivez le rythme et les orientations que vous impose la société sans vous impliquer à fond et prendre des initiatives personnelles pour construire un projet de vie personnel, ou professionnel et ambitieux. \nBonne nouvelle : il est toujours possible de changer !\nLe premier pas vers l’action est souvent le plus difficile, mais une fois lancé, on crée une dynamique positive. Travailler sur son état d’esprit, sur ses habitudes et sur son environnement peut transformer une personne hésitante en quelqu’un de déterminé et motivé.` }, { min: 10.01, max: 15, titre: "Énergie et motivation pour entreprendre", texte: `Cet indicateur informe sur l’énergie que vous avez pour entreprendre et votre facilité pour passer à l’action contrairement à rester dans une attitude contemplative et réfléchie. Selon vos résultats avec un score entre 11 et 15 sur 20, vous avez un bon profil d’entrepreneur et une bonne énergie pour vous développer et entreprendre des projets. Vous êtes assez combatif pour passer à l’action, et d’ailleurs vous aimez passer à l’action. Vous les savez. \nCela passe par l’acquisition de programme de développement personnel et de motivation. Continuez de rêver à une vie meilleure et donnez-vous les moyens de la créer.` }, { min: 15.01, max: 20, titre: "Énergie et motivation pour entreprendre", texte: `Cet indicateur informe sur l’énergie que vous avez pour entreprendre et votre facilité pour passer à l’action contrairement à rester dans une attitude contemplative et réfléchie. Selon vos résultats avec un score entre 16 et 20, vous avez l’âme d’un entrepreneur, vous préférez prendre des initiatives et\ndiriger les gens, les situations et les évènements plutôt que vous laissez influencer par eux et les subir. Vous avez le potentiel d’un entrepreneur ou d’un leader et vous aimez assumer le rôle d’être celui qui avance et que l’on suit.` }] },
+  8: { ranges: [{ min: 0, max: 5, titre: "Perfectionnisme et rigorisme", texte: `Cet indicateur informe sur votre perfectionnisme, votre rigueur et votre systématisme à l’opposé d’un comportement non perfectionniste dans le relâchement et la désorganisation. Ce test mesure votre tendance au perfectionnisme et vous aide à en être conscient. Nous mesurons les fonctionnements innés que vous avez et qui vous poussent au perfectionnisme, à la rigueur, au souci du détail et qui font ressortir votre capacité à structurer des actions. Selon vos résultats avec un score entre 0 et 5 sur 20 vous gagneriez certainement à être un peu plus perfectionniste et attentif aux détails. Votre entourage apprécierait de vous voir soigner, ranger, et mieux organiser vos activités avec un peu plus d’attention et une certaine rigueur ou constance. Vous pouvez progresser et les gens auront un autre regard sur vous. Acquérir un peu de discipline et de rigueur est un bon challenge à se fixer.` }, { min: 5.01, max: 10, titre: "Perfectionnisme et rigorisme", texte: `Cet indicateur informe sur votre perfectionnisme, votre rigueur et votre systématisme à l’opposé d’un comportement non perfectionniste dans le relâchement et la désorganisation. Ce test mesure votre tendance au perfectionnisme et vous aide à en être conscient. Nous mesurons les fonctionnements innés que vous avez et qui vous poussent au perfectionnisme, à la rigueur, au souci du détail et qui font ressortir votre capacité à structurer des actions. Selon vos résultats avec un score entre 6 et 10 sur 20 vous êtes en dessous de la moyenne sociale en ce qui concerne le fait d’être perfectionniste. Vous rangez, classez et organisez vos affaires et votre vie pour arriver à avancer, sans faire de l’ensemble de ces pratiques une religion marquée par des rituels immuables d’ordre et de propreté. Vous gardez une vue d’ensemble sur votre vie sans devenir obsédé par les détails.` }, { min: 10.01, max: 15, titre: "Perfectionnisme et rigorisme", texte: `Cet indicateur informe sur votre perfectionnisme, votre rigueur et votre systématisme à l’opposé d’un comportement non perfectionniste dans le relâchement et la désorganisation. Ce test mesure votre tendance au perfectionnisme et vous aide à en être conscient. Nous mesurons les fonctionnements innés que vous avez et qui vous poussent au perfectionnisme, à la rigueur, au souci du détail et qui font ressortir votre capacité à structurer des actions. Selon vos résultats Si votre note est entre 11 et 15 sur 20 vous êtes certainement très exigeant avec vous-mêmes et avec les autres. Vous pourriez vous relâcher un peu et vous permettre d’être moins perfectionniste et d’avoir une vue d’ensemble tout en restant autant performant. Ne confondez pas le perfectionnisme, et l’efficacité qui conduit elle à la performance.` }, { min: 15.01, max: 20, titre: "Perfectionnisme et rigorisme", texte: `Cet indicateur informe sur votre perfectionnisme, votre rigueur et votre systématisme à l’opposé d’un comportement non perfectionniste dans le relâchement et la désorganisation. Ce test mesure votre tendance au perfectionnisme et vous aide à en être conscient. Nous mesurons les fonctionnements innés que vous avez et qui vous poussent au perfectionnisme, à la rigueur, au souci du détail et qui font ressortir votre capacité à structurer des actions selon vos résultats Si votre note est entre 16 et 20 sur 20 votre souci de la perfection peut vous conduire à voir les détails aux dépens de garder une vue de l’ensemble d’une situation. \nCertainement que vous êtes connu et reconnu pour votre rigueur et votre volonté à produire un travail de qualité, mais attention, la perfection n‘est pas de ce monde. Comprenez ce piège subtil et paradoxal, la recherche exagérée de la perfection peut vous conduire dans une situation génératrice d’imperfection (par exemple la volonté de produire un travail excellent peut vous conduire à mobiliser du temps et de l’énergie aux dépens d’autres choses). \nRéfléchissez à ce point de vue philosophique, il y a une différence entre le perfectionnisme et l’efficacité. Par exemple, un couturier peut produire des costumes qui sont parfaits, mais il peut ne pas être efficace dans son travail de couturier, car il met du temps à les produire et il n’est pas rentable, car cela lui prend du temps pour les faire. Ainsi il est perfectionniste, mais pas efficace.` }] },
+  9: { ranges: [{ min: 0, max: 5, titre: "Sentiment d’Insécurité et besoin de prévoyance", texte: `Cet indicateur informe sur votre tendance à la peur, aux inquiétudes, à l’insécurité contrairement à une attitude confiante, sereine ou insouciante.  \nCe test mesure votre tendance à avoir des peurs et vous aide à en être conscient. Nous mesurons les fonctionnements innés que vous avez et qui se nourrissent d’inquiétude et vous font ressentir un état d’insécurité. \nSelon vos résultats avec un score de 0 à 5 sur 20, apparemment rien ne vous effraie, vous n’êtes pas inquiet et avez peu de craintes. Vous gagneriez à être parfois prudent pour évaluer les risques avant de prendre certaines décisions. Attention de ne pas négliger certaines réalités et prendre des risques inconsidérés par une forme d’insouciance ou d’intrépidité. Avec un tel score, vous êtes vraiment une personne qui n’a pas de peur, mais attention, que cela ne vous dispense pas d’anticiper et de calculer un peu plus les risques et les crises que vous pourriez rencontrer et vous préparer à les gérer.` }, { min: 5.01, max: 10, titre: "Sentiment d’Insécurité et besoin de prévoyance", texte: `Cet indicateur informe sur votre tendance à la peur, aux inquiétudes, à l’insécurité contrairement à une attitude confiante, sereine ou insouciante.  \nCe test mesure votre tendance à avoir des peurs et vous aide à en être conscient. Nous mesurons les fonctionnements innés que vous avez et qui se nourrissent d’inquiétude et vous font ressentir un état d’insécurité. \nSelon vos résultats avec un score de 6 à 10 sur 20 concernant les peurs et les inquiétudes, vous êtes en dessous de la moyenne sociale. Apprenez à identifier vos forces et vos faiblesses et souvenez-vous que les plus grands changements arrivent quand on sort de sa zone de confort, mais ça, vous le savez. \nEn revanche sans peur nous manquons de prudence et trop de peurs nous paralysent, mais vous semblez ne pas avoir de peur pour avancer dans la vie et entreprendre. \nConsidérez quand même que la prudence, la sagesse et la réflexion sont aussi des atouts pour réussir.` }, { min: 10.01, max: 15, titre: "Sentiment d’Insécurité et besoin de prévoyance", texte: `Cet indicateur informe sur votre tendance à la peur, aux inquiétudes, à l’insécurité contrairement à une attitude confiante, sereine ou insouciante.  \nCe test mesure votre tendance à avoir des peurs et vous aide à en être conscient. Nous mesurons les fonctionnements innés que vous avez et qui se nourrissent d’inquiétude et vous font ressentir un état d’insécurité. \nSelon vos résultats avec un score de 11 à 15 sur 20, vous montrez peut-être des excès de prudence et passez peut-être à côté de certaines opportunités par le fait de refuser de prendre des risques raisonnés.  Allez courage, qui ne risque rien n’a rien. Il ne faut avoir aucun regret pour le passé, aucune crainte pour le présent, et une confiance inébranlable pour l'avenir. Clarifiez votre projet de vie, calculez les risques bien sûr, puis lancez-vous. Il vaut mieux avancer avec sagesse et confiance que de ne pas avancer du tout, et nous savons que personne ne peut tout prévoir. \nAyez confiance et ne laissez pas vos peurs vous retenir de passer à l’action.` }, { min: 15.01, max: 20, titre: "Sentiment d’Insécurité et besoin de prévoyance", texte: `Cet indicateur informe sur votre tendance à la peur, aux inquiétudes, à l’insécurité contrairement à une attitude confiante, sereine ou insouciante.  \nCe test mesure votre tendance à avoir des peurs et vous aide à en être conscient. Nous mesurons les fonctionnements innés que vous avez et qui se nourrissent d’inquiétude et vous font ressentir un état d’insécurité. \nSelon vos résultats avec un score entre 16 et 20 sur 20 votre score indique que vous avez beaucoup de prudence, de peurs, et d’inquiétudes. \nLes peurs que vous avez peuvent-être diverses, elles ont pu s’installer suite à des traumatismes ou des échecs. \nCes peurs sont maintenant comme des freins inconscients, des sortes de valises que l’on trimballe sans même s’en rendre compte et qui, au final, nous empêchent d’embarquer dans le train vers la destination de nos rêves. \nOu du moins qui nous empêchent d’y entrer avec grâce et légèreté. Imaginez une valise bien lourde d’un côté et vous de l’autre, en train d’essayer de la pousser à bord à grands renforts de contorsions, soupirs, sueur qui perle et pantalon qui craque. Voilà, ça donne ça au figuré quand on fait plein d’efforts pour parvenir à notre objectif tout en étant encombré de belles grosses valises inconscientes. En d’autres termes, on dépense une énergie folle car on a peur de beaucoup de choses. Peur de rater le train, de ne pas monter dans le train, peur de se tromper de train, peur d’avoir un accident de train, peur d’oublier sa valise dans le train, peur de ne pas avoir son billet de train, peur de descendre du train à la bonne gare. Avec toutes ses peurs on a des chances de vivre un voyage difficile, on suppose qu’on est dans le train de l’enfer, mais l’enfer n’est pas dans le train, il est juste en nous. La peur a forcé les portes de notre cœur et a chassé la paix.` }] },
+  10: { ranges: [{ min: 0, max: 5, titre :"Sensibilité affective et émotionnelle", texte: `Cet indicateur informe sur votre sensibilité affective et émotionnelle à l’opposé d’un détachement affectif et d’un comportement sans émotion. \nCe test mesure votre sensibilité affective et émotionnelle et vous aide à en être conscient. \nNous mesurons les fonctionnements innés que vous avez et qui montrent votre sensibilité affective et émotionnelle. Selon vos résultats avec un score entre 0 et 5 sur 20, vous êtes une personne qui se laisse peut dominer par ses émotions et ses sentiments. Vous abordez une situation relationnelle avec raison et pragmatisme sans succomber à la tentation de chercher à faire plaisir à tout prix. Peut-être même que l’on vous perçoit comme froid et insensible et pas assez connecté à vos émotions. \nAcceptez de vous intéresser à toute cette dimension émotionnelle qui fait partie de vous, à vous écouter, et à verbaliser ce que vous ressentez.` }, { min: 5.01, max: 10, titre :"Sensibilité affective et émotionnelle", texte: `Cet indicateur informe sur votre sensibilité affective et émotionnelle à l’opposé d’un détachement affectif et d’un comportement sans émotion. \nCe test mesure votre sensibilité affective et émotionnelle et vous aide à en être conscient. \nNous mesurons les fonctionnements innés que vous avez et qui montrent votre sensibilité affective et émotionnelle. Selon vos résultats avec un score entre 6 et 10 sur 20, concernant votre sensibilité affective et émotionnelle, vous êtes en dessous de la moyenne de la population, vous accordez une place très modérée à l’expression de vos émotions. \nVous arrivez mal à trouver un juste milieu pour vous positionner dans un échange relationnel qui enrichit équitablement les deux parties. \nVous accordez une petite importance à exprimer à la fois de la chaleur humaine et de la compassion, mais cela ne vous est pas naturel. \nVous savez surtout discerner et considérer les responsabilités de chacun dans les échanges sans trop vous laisser submerger par des sentiments. Votre sensibilité émotionnelle est moyennement basse.` }, { min: 10.01, max: 15, titre :"Sensibilité affective et émotionnelle", texte: `Cet indicateur informe sur votre sensibilité affective et émotionnelle à l’opposé d’un détachement affectif et d’un comportement sans émotion. \nCe test mesure votre sensibilité affective et émotionnelle et vous aide à en être conscient. \nNous mesurons les fonctionnements innés que vous avez et qui montrent votre sensibilité affective et émotionnelle. Selon vos résultats si votre note est entre 11 et 15 sur 20 vous avez une attirance professionnelle vers un métier qui comporte une vraie dimension sociale et relationnelle dans votre vie, car pour vous les relations sont importantes. \nVous pouvez avoir tendance à prendre des décisions sous l’influence de vos émotions.\nLes personnes qui ont une sensibilité émotionnelle qui s’exprime trop dans les relations peuvent même compenser leur sentiment d’insécurité en entretenant une dépendance affective avec les autres pour lutter contre la peur d’être abandonné. \n\nLes conséquences positives d'une bonne sensibilité affective peuvent apparaitre dans les points suivants : \n\nUne meilleure gestion des conflits grâce à l'écoute et à la compréhension des émotions des autres.\n\nUne plus grande capacité à apporter du soutien à vos proches.\n\nUne communication plus fluide et bienveillante.\n\nUne intelligence émotionnelle qui favorise le succès personnel et professionnel.\n\nUne meilleure satisfaction relationnelle et un sentiment de connexion avec autrui.` }, { min: 15.01, max: 20, titre :"Sensibilité affective et émotionnelle", texte: `Cet indicateur informe sur votre sensibilité affective et émotionnelle à l’opposé d’un détachement affectif et d’un comportement sans émotion. \nCe test mesure votre sensibilité affective et émotionnelle et vous aide à en être conscient. \nNous mesurons les fonctionnements innés que vous avez et qui montrent votre sensibilité affective et émotionnelle. Selon vos résultats si votre note est entre 16 et 20 sur 20, vos sentiments peuvent vous emporter au-delà de réactions raisonnables. Votre sensibilité peut vous conduire à des changements d’humeurs ou d’attitudes qui vous font vivre des pics et des abymes au niveau émotionnel par exemple joie intense et euphorique lors d’un anniversaire, suivit ensuite d’un profond sentiment d’abandon ou de déprime lors d’un court moment de solitude. Veillez à ne pas vous laisser égarer par vos émotions.  \n \nUne sensibilité excessive peut devenir un poids. Elle peut entraîner une surcharge émotionnelle, une difficulté à poser des limites et une tendance à trop s'investir dans les problèmes des autres. Vous pourriez aussi ressentir de l'anxiété face aux critiques ou aux conflits, voire être facilement blessé par des remarques ou des situations.` }] },
+  11: { ranges: [{ min: 0, max: 5, titre: "Volonté d’apprendre et de se développer", texte: `Cet indicateur informe sur votre volonté à apprendre et votre désir à vous former contrairement à l’opposé d’une stagnation intellectuelle et d’un non intérêt pour vous développer.  \nCe test mesure votre appétence pour vous former et votre motivation à vouloir apprendre des choses, le goût et l’intérêt que vous entretenez pour investir dans votre développement personnel. Ce test vous aide à être conscient de votre curiosité intellectuelle et comment cela peut affecter votre croissance et votre vie. \nNous mesurons les fonctionnements innés et les mécanismes naturels que vous avez. Selon vos résultats si vous avez un score entre 0 et 5 sur 20, vous avez besoin de réaliser qu’on avance dans la vie avec des compétences que l’on acquiert et que l’on renouvelle constamment. Vous avez certainement déjà des capacités et vous pourriez encore les développer ou en acquérir d’autres dans des domaines très différents, que vous soyez manuel ou intellectuel. Réalisez que vous pouvez investir un peu plus en vous en lisant des livres ou même en suivant des programmes de formation dans des établissements ou sur des vidéos ou sur internet.\nNe devenez pas un esclave, à cause des choses que vous ignorez. La connaissance nous libère.` }, { min: 5.01, max: 10, titre: "Volonté d’apprendre et de se développer", texte: `Cet indicateur informe sur votre volonté à apprendre et votre désir à vous former contrairement à l’opposé d’une stagnation intellectuelle et d’un non intérêt pour vous développer. Ce test mesure votre appétence pour vous former et votre motivation à vouloir apprendre des choses, le goût et l’intérêt que vous entretenez pour investir dans votre développement personnel. Ce test vous aide à être conscient de votre curiosité intellectuelle et comment cela peut affecter votre croissance et votre vie. \nNous mesurons les fonctionnements innés et les mécanismes naturels que vous avez. Selon vos résultats si vous avez entre 6 et 10 sur 20, concernant votre motivation à apprendre, vous êtes en dessous de la moyenne de la population, vous avez probablement vos sources d’informations privilégiées, journaux, livres, internet, mais vous n’avez peut-être pas encore choisi un champ d’investigation précis dans lequel vous vous nourrissez régulièrement d’informations et de formations choisies pour vous équiper en vue d’atteindre des objectifs personnels ou professionnels. \nL’information et la formation sont des facteurs de développement importants. Devenez curieux et profitez d’acquérir des connaissances intellectuelles ou manuelles, c’est le meilleur investissement.` }, { min: 10.01, max: 15, titre: "Volonté d’apprendre et de se développer", texte: `Cet indicateur informe sur votre volonté à apprendre et votre désir à vous former contrairement à l’opposé d’une stagnation intellectuelle et d’un non intérêt pour vous développer. Ce test mesure votre appétence pour vous former et votre motivation à vouloir apprendre des choses, le goût et l’intérêt que vous entretenez pour investir dans votre développement personnel. Ce test vous aide à être conscient de votre curiosité intellectuelle et comment cela peut affecter votre croissance et votre vie. \nNous mesurons les fonctionnements innés et les mécanismes naturels que vous avez. Selon vos résultats si vous avez entre 11 et 15 sur 20, concernant votre motivation à apprendre, vous êtes dans la moyenne de la population, vous êtes ouvert à de nombreuses thématiques, vous considérez l’information et les formations comme des médicaments qui vous soignent ou une nourriture qui vous donne de la force pour avancer. Mais attention à ne pas rester qu’un disque dur qui enregistre et accumule de la connaissance, il vous faut aussi implémenter et vous pouvez aussi apprendre à passer à l’action. \nToutes les choses que vous savez augmentent et prennent de la valeur quand vous les utilisez et les mettez en pratique.` }, { min: 15.01, max: 20, titre: "Volonté d’apprendre et de se développer", texte: `Cet indicateur informe sur votre volonté à apprendre et votre désir à vous former contrairement à l’opposé d’une stagnation intellectuelle et d’un non intérêt pour vous développer. Ce test mesure votre appétence pour vous former et votre motivation à vouloir apprendre des choses, le goût et l’intérêt que vous entretenez pour investir dans votre développement personnel. Ce test vous aide à être conscient de votre curiosité intellectuelle et comment cela peut affecter votre croissance et votre vie. \nNous mesurons les fonctionnements innés et les mécanismes naturels que vous avez.  Selon vos résultats si vous avez entre 16 et 20 sur 20, concernant votre motivation à apprendre, vous êtes au-dessus de la moyenne de la population. \nVous savez que l'apprentissage est un formidable levier de développement personnel et professionnel, mais il doit être équilibré pour être pleinement bénéfique. Que vous cherchiez à accroître votre motivation ou à mieux l'orienter, l'essentiel est de trouver le juste milieu entre savoir, action et bien-être.\nAttention de ne pas être lancé dans une quête absolue de la recherche de l’information et de la connaissance. Votre temps est précieux, et songez que toutes formations suivies doivent aussi être rentables, ça veut dire que vous devez les utiliser et les mettre en pratique. En tous cas bravo pour votre curiosité intellectuelle et votre volonté d’apprendre.` }] }
+};
+
+let params = new URLSearchParams(document.location.search);
+if (!params.has('nom')) {
+    const demoParams = "?nom=Démonstration&prenom=profil&T1=Penchant pour la solitude et l’effacement&V1=17&T2=Sensibilité affective et émotionnelle&V2=12&T3=Conscience de soi et affirmation de sa valeur&V3=15.5&T4=Volonté d’apprendre et de se développer&V4=14&T5=Énergie et motivation pour entreprendre&V5=14&T6=Sentiment d’Insécurité et besoin de prévoyance&V6=14&T7=Tendance à l’auto sabotage&V7=12.5&T8=Perfectionnisme et rigorisme&V8=12.5&T9=Ambition et compétition relationnelle&V9=11&T10=Besoin d’indépendance et d’anticonformisme&V10=11&T11=Attitude directive et de contrôle&V11=6";
+    params = new URLSearchParams(demoParams);
+}
+
+document.getElementById("name").innerText = sanitizeInput(params.get("nom")+" "+params.get("prenom"));
+
+const nomUser = sanitizeInput(params.get("nom")+" "+params.get("prenom"));
+const userDisplayedScores = {};
+const listContainer = document.getElementById("items-list");
+
+for (let i = 1; i <= 2; i++) {
+    const t = sanitizeInput(params.get(`T${i}`));
+    const v = validateScore(params.get(`V${i}`)) || 0;
+    userDisplayedScores[i] = { titre: t, valeur: v };
+
+    listContainer.innerHTML += `
+        <div class="score-item" id="item-${i}" onclick="handleSelection(${i})">
+            <div class="score-text">
+                <span>${t}</span>
+                <div><span>${v}/20</span><span class="toggle-icon">▼</span></div>
+            </div>
+            <div class="score-bar"><div class="score-fill" id="meter${i}"></div></div>
+            <div class="mobile-desc" id="m-desc-${i}"></div>
+        </div>`;
+}
+
+function normalizeText(str) { 
+    return str ? str.toLowerCase().replace(/['']/g, "'").trim() : ""; 
+}
+
+function positionChat() {
+    const chatInterface = document.getElementById('chat-interface');
+    if (!isChatActive || !chatInterface) return;
+    
+    if (window.innerWidth > 900) {
+        document.getElementById('desktop-chat-container').appendChild(chatInterface);
+        document.getElementById('standard-content').style.display = 'none';
+        document.getElementById('desktop-chat-container').style.display = 'flex';
+        chatInterface.classList.remove('mobile-fullscreen');
+    } else {
+        document.getElementById('mobile-chat-container').appendChild(chatInterface);
+        chatInterface.classList.add('mobile-fullscreen');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+window.addEventListener('load', () => {
+    const template = document.getElementById('chat-interface-template');
+    document.getElementById('mobile-chat-container').appendChild(template.firstElementChild);
+});
+
+window.addEventListener('resize', positionChat);
+
+function handleSelection(index) {
+    const data = userDisplayedScores[index];
+
+    // ===== FIX : Chercher la clé correspondante par titre normalisé =====
+    const explKey = TITRE_TO_KEY[data.titre];
+
+    const config = EXPLICATIONS[explKey];
+    let rangeTexte = "Explication non disponible";
+    
+    if (config) {
+        const range = config.ranges.find(r => data.valeur >= r.min && data.valeur <= r.max);
+        if (range) rangeTexte = range.texte;
+    }
+    
+    document.getElementById('explicationtendance').innerText = `${data.titre.toUpperCase()} (${data.valeur}/20)`;
+    document.getElementById('explicationtitre').innerText = "";
+    document.getElementById('explicationparagraphe').innerText = rangeTexte;
+    
+    const allItems = document.querySelectorAll('.score-item');
+    const currentItem = document.getElementById(`item-${index}`);
+    const isOpening = !currentItem.classList.contains('active');
+    
+    allItems.forEach(item => item.classList.remove('active'));
+    if (isOpening) {
+        currentItem.classList.add('active');
+        document.getElementById(`m-desc-${index}`).innerText = rangeTexte;
+    }
+    
+    if (window.innerWidth > 900 && isChatActive) {
+        document.getElementById('standard-content').style.display = 'block';
+        document.getElementById('desktop-chat-container').style.display = 'none';
+    }
+}
+
+function fermerChat() {
+    const chatInterface = document.getElementById('chat-interface');
+    chatInterface.style.display = 'none';
+    chatInterface.classList.remove('mobile-fullscreen');
+    document.body.style.overflow = 'auto';
+    document.getElementById('desktop-chat-container').style.display = 'none';
+    document.getElementById('standard-content').style.display = 'block';
+}
+
+function scrollToBottom() {
+    const chatHistory = document.getElementById('chat-history');
+    chatHistory.scrollTop = chatHistory.scrollHeight;
+}
+
+function addChatMessage(text, sender) {
+    const historyDiv = document.getElementById('chat-history');
+    const bubble = document.createElement('div');
+    bubble.className = `chat-message ${sender === 'user' ? 'user-message' : 'ai-message'}`;
+    bubble.innerHTML = sender === 'ai' ? marked.parse(text) : text;
+    historyDiv.appendChild(bubble);
+    scrollToBottom();
+    chatContext.push({ role: sender, content: text });
+}
+
+function showTypingIndicator() {
+    const historyDiv = document.getElementById('chat-history');
+    const loader = document.createElement('div');
+    loader.id = 'ai-loading';
+    loader.className = 'chat-message ai-message typing-indicator';
+    loader.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+    historyDiv.appendChild(loader);
+    scrollToBottom();
+}
+
+function removeTypingIndicator() {
+    const loader = document.getElementById('ai-loading');
+    if (loader) loader.remove();
+}
+
+async function handleUserMessage() {
+    if (isProcessing) return;
+    
+    const input = document.getElementById('user-input');
+    const message = sanitizeInput(input.value);
+    if (!message) return;
+    
+    isProcessing = true;
+    input.disabled = true;
+    document.querySelector('.btn-send').disabled = true;
+    
+    addChatMessage(message, 'user');
+    input.value = "";
+    showTypingIndicator();
+    
+    try {
+//        const nomUser = document.getElementById("name").innerText;
+        const systemInstruction = 
+        `Tu es le coach en développement personnel de ${nomUser}. 
+        Réponds de manière courte, motivante et structurée.
+        Utilise impérativement le format Markdown (gras, listes, titres) pour structurer ta réponse. 
+        Ne te présente pas, ne dis pas "bonjour", va à l'essentiel. Limite la réponse à 300 mots. 
+        Rappel en fin d'analyse que ceci est une démonstration et invite l'utilisateur à passer son propre test de personnalité en cliquant sur le bouton [👩‍💻 Je passe le test](${paymentURL}).`;  
+
+        const reponse = await callSecureChat(message, systemInstruction);
+        removeTypingIndicator();
+        addChatMessage(reponse, 'ai');
+    } catch (error) {
+        removeTypingIndicator();
+        addChatMessage("❌ Erreur: " + error.message, 'ai');
+    } finally {
+        isProcessing = false;
+        input.disabled = false;
+        document.querySelector('.btn-send').disabled = false;
+        input.focus();
+    }
+}
+
+async function demarrerChatSynthese() {
+    const chatInterface = document.getElementById('chat-interface');
+
+    // 1. POSITIONNEMENT
+    if (window.innerWidth > 900) {
+        document.getElementById('standard-content').style.display = 'none';
+        const desktopContainer = document.getElementById('desktop-chat-container');
+        desktopContainer.appendChild(chatInterface);
+        desktopContainer.style.display = 'flex';
+    } else {
+        document.getElementById('mobile-chat-container').appendChild(chatInterface);
+        chatInterface.classList.add('mobile-fullscreen');
+        document.body.style.overflow = 'hidden'; 
+    }
+    
+    chatInterface.style.display = 'flex'; 
+
+    // 2. LOGIQUE DE REPRISE OU DÉMARRAGE
+    if (isChatActive) {
+        return; 
+    }
+    
+    // Première fois : Initialisation
+    isChatActive = true;
+    isProcessing = true;
+    chatContext = [];
+    document.getElementById('chat-history').innerHTML = "";
+
+
+    document.getElementById('btn-synthese').disabled = true;
+    document.getElementById('user-input').disabled = true;
+    document.querySelector('.btn-send').disabled = true;
+    
+    chatContext = [];
+    document.getElementById('chat-history').innerHTML = "";
+    
+    addChatMessage("Je voudrais une synthèse de mon profil.", 'user');
+    showTypingIndicator();
+    
+    try {
+//        const nomUser = document.getElementById("name").innerText;
+        let profileData = "";
+        for (let i = 1; i <= 2; i++) {
+            profileData += `- ${userDisplayedScores[i].titre}: ${userDisplayedScores[i].valeur}/20\n`;
+        }
+        
+        const prompt = `Tu es un coach de vie et de développement personnel. Voici les résultats de ${nomUser}:\n${profileData}\n
+        En t'appuyant sur tes connaissances en psychologie humaines et developpement personnel, fais une synthèse structurée en Markdown.
+        Utilise des titres (##), du gras (**) et des listes à puces pour rendre la lecture agréable. Informe l'utilisateur que ton analyse se base sur 2 tendances disponibles en version démo mais qu'il y en a 11 disponibles : les données manquantes impactent l'analyse.
+        Mets en avant les points forts et les axes de progrès.\n
+        Tu utiliseras un ton direct mais bienveillant, pas de formule de politesse trop pompeuse (chère Adeline). Vas à l'essentiel, vulgarise, donne des exemples, sois positif et motivant.\n
+        Limite la réponse à 1000 mots.
+        Rappel en fin d'analyse que ceci est une démonstration et invite l'utilisateur à passer son propre test de personnalité en cliquant sur le bouton [👩‍💻 Je passe le test](${paymentURL}).`;  
+
+        const reponse = await callSecureChat("Génère l'analyse", prompt);
+        removeTypingIndicator();
+        addChatMessage(reponse, 'ai');
+    } catch (error) {
+        removeTypingIndicator();
+        addChatMessage("❌ Erreur: " + error.message, 'ai');
+    } finally {
+        isProcessing = false;
+        document.getElementById('btn-synthese').disabled = false;
+        document.getElementById('user-input').disabled = false;
+        document.querySelector('.btn-send').disabled = false;
+    }
+}
+
+
+const paymentURL = `https://scantest.typeform.com/to/OGAudYFr`
+
+function goToPayment() {
+    //const destinationUrl = `https://www.pierrebagnolyformations.com/order-form/eyJmIjoxNTIxOTl9/?nom=${clientName}&prenom=${clientPrenom}&email=${clientMail}&telephone=${clientPhone}`;
+    window.open(paymentURL, '_blank');
+}
+
+document.getElementById('user-input').addEventListener('keypress', (e) => { 
+    if (e.key === 'Enter' && !isProcessing) handleUserMessage(); 
+});
+
+function lancerAnimation() {
+    for (let i = 1; i <= 2; i++) {
+        const v = userDisplayedScores[i].valeur;
+        setTimeout(() => { 
+            document.getElementById(`meter${i}`).style.width = (v * 100 / 20) + "%"; 
+        }, 100 * i);
+    }
+
+
+    // Cela simule un clic sur le premier élément pour l'ouvrir et afficher le texte
+    handleSelection(1);
+}
+
+const video = document.getElementById('intro-video');
+if (video) {
+    video.onended = () => { 
+        document.getElementById('intro-screen').classList.add('hidden'); 
+        lancerAnimation(); 
+    };
+} else { 
+    lancerAnimation(); 
+}
+</script>
+</body>
+</html>

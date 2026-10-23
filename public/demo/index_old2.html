@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scantest - Découvrez Votre Véritable Potentiel</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #1a365d;
+            --accent-color: #facc15;
+            --secondary-blue: #0891b2;
+            --bg-color: #ffffff;
+            --text-color: #1e293b;
+            --soft-gray: #f1f5f9;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .header-container{
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0; padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        header {
+            width: 100%; max-width: 1200px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 10px 20px 10px; border-bottom: 1px solid var(--border-color);
+            margin-bottom: 10px;
+        }
+        header img { max-height: 60px; }
+
+        .btn-calendly {
+            background-color: var(--primary-color); border: 2px solid var(--primary-color);
+            color: #ffffff; padding: 10px 20px; border-radius: 6px;
+            text-decoration: none; font-weight: 700; font-size: 0.9rem; text-transform: uppercase;
+        }
+
+        .btn-contact {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-contact:hover {
+            background-color: transparent;
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 50%, #f1f5f9 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(250, 204, 21, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(8, 145, 178, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, -30px) scale(1.1); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            line-height: 1.2;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .hero h1 .highlight {
+            background: linear-gradient(120deg, var(--accent-color) 0%, #fbbf24 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: #475569;
+            margin-bottom: 40px;
+            font-weight: 500;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 16px 40px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-blue));
+            color: white;
+            box-shadow: 0 10px 25px rgba(26, 54, 93, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(26, 54, 93, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Video/Testimonials Section */
+        .video-section {
+            padding: 80px 20px;
+            background: white;
+            text-align: center;
+        }
+
+        .video-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .video-section p {
+            font-size: 1.1rem;
+            color: #64748b;
+            margin-bottom: 40px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Carousel Flexible */
+        .carousel-container {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .slides-wrapper {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+            min-height: 600px;
+        }
+
+        .slide {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            display: block;
+            opacity: 1;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .slide[data-type="combined"] {
+            min-height: auto;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Video container standard (pour slides vidéo seule) */
+        .video-container {
+            max-width: 900px;
+            margin: 0 auto;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Slide combinée Vidéo + Image */
+        .combined-slide-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .video-image-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        /* NOUVEAU: Conteneur spécifique pour vidéo dans slide combinée */
+        .combined-video-wrapper {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            padding-bottom: 56.25%; /* Ratio 16:9 */
+            height: 0;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            background: #000;
+        }
+
+        .combined-video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Image dans slide combinée */
+        .combined-slide-container .slide-image {
+            width: 100%;
+            height: auto;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: block;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            object-fit: contain;
+        }
+
+        /* Titre optionnel entre vidéo et image */
+        .slide-separator {
+            text-align: center;
+            margin: 20px 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        /* Testimonial Card Styles */
+        .testimonial-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .testimonial-image {
+            flex-shrink: 0;
+        }
+
+        .testimonial-image img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--accent-color);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .testimonial-content {
+            flex: 1;
+        }
+
+        .stars {
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            letter-spacing: 3px;
+        }
+
+        .testimonial-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #475569;
+            font-style: italic;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .testimonial-text::before {
+            content: '"';
+            font-size: 4rem;
+            color: var(--accent-color);
+            opacity: 0.3;
+            position: absolute;
+            top: -20px;
+            left: -10px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .testimonial-author h4 {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .testimonial-author p {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        /* Carousel Controls */
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(26, 54, 93, 0.8);
+            color: white;
+            border: none;
+            font-size: 3rem;
+            padding: 20px 25px;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            z-index: 10;
+            line-height: 1;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .carousel-btn:hover {
+            background: var(--primary-color);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .carousel-btn.prev {
+            left: -80px;
+        }
+
+        .carousel-btn.next {
+            right: -80px;
+        }
+
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 40px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #cbd5e1;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dot:hover {
+            background: #94a3b8;
+            transform: scale(1.2);
+        }
+
+        .dot.active {
+            background: var(--primary-color);
+            width: 40px;
+            border-radius: 6px;
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            padding: 80px 20px;
+            background: linear-gradient(to bottom, #f8fafc, white);
+        }
+
+        .pricing-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 60px;
+        }
+
+        .pricing-cards {
+            display: flex;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            flex: 1;
+            min-width: 300px;
+            max-width: 360px;
+            position: relative;
+            border: 2px solid var(--border-color);
+            transition: all 0.4s ease;
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .pricing-card:nth-child(1) { animation-delay: 0.1s; }
+        .pricing-card:nth-child(2) { animation-delay: 0.2s; }
+        .pricing-card:nth-child(3) { animation-delay: 0.3s; }
+        .pricing-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .pricing-card.featured {
+            border: 3px solid var(--accent-color);
+            box-shadow: 0 15px 40px rgba(250, 204, 21, 0.2);
+            transform: scale(1.05);
+        }
+
+        .pricing-card.premium {
+            border: 3px solid var(--secondary-blue);
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+        }
+
+        .pricing-card.ultra-premium {
+            border: 3px solid #8b5cf6;
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+            box-shadow: 0 20px 50px rgba(139, 92, 246, 0.2);
+        }
+
+        .ultra-premium-badge {
+            background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+            color: white;
+        }
+
+        .card-badge {
+            position: absolute;
+            top: -15px;
+            right: 30px;
+            background: var(--accent-color);
+            color: var(--primary-color);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(250, 204, 21, 0.4);
+        }
+
+        .premium-badge {
+            background: linear-gradient(135deg, var(--secondary-blue), #06b6d4);
+            color: white;
+        }
+
+        .pricing-card h3 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .price {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--primary-color);
+            margin: 20px 0;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .price small {
+            font-size: 1rem;
+            color: #64748b;
+            font-weight: 400;
+        }
+
+        .features-list {
+            list-style: none;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .features-list li {
+            padding: 12px 0;
+            padding-left: 30px;
+            position: relative;
+            color: #475569;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .features-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--secondary-blue);
+            font-weight: 900;
+            font-size: 1.2rem;
+        }
+
+        .btn-card {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 700;
+            font-size: 1rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .btn-demo {
+            background: var(--soft-gray);
+            color: var(--primary-color);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-demo:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .btn-featured {
+            background: linear-gradient(135deg, var(--accent-color), #fbbf24);
+            color: var(--primary-color);
+            box-shadow: 0 8px 20px rgba(250, 204, 21, 0.3);
+        }
+
+        .btn-featured:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(250, 204, 21, 0.4);
+        }
+
+        .btn-premium {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-blue));
+            color: white;
+            box-shadow: 0 8px 20px rgba(8, 145, 178, 0.3);
+        }
+
+        .btn-premium:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(8, 145, 178, 0.4);
+        }
+
+        .btn-ultra-premium {
+            background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+            color: white;
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-ultra-premium:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(139, 92, 246, 0.4);
+        }
+
+        .payment-badge {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 8px;
+            text-transform: uppercase;
+        }
+
+        /* Comparison Section */
+        .comparison-section {
+            padding: 80px 20px;
+            background: white;
+        }
+
+        .comparison-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 50px;
+        }
+
+        .comparison-table {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .comparison-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th {
+            background: var(--primary-color);
+            color: white;
+            padding: 20px;
+            text-align: left;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .comparison-table td {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .comparison-table tr:hover {
+            background: var(--soft-gray);
+        }
+
+        .comparison-table .version-name {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary-color);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        footer p {
+            margin-bottom: 20px;
+        }
+
+        footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .carousel-btn.prev {
+                left: -60px;
+            }
+            
+            .carousel-btn.next {
+                right: -60px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .pricing-cards {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .pricing-card {
+                max-width: 100%;
+            }
+
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            header {
+                padding: 15px 20px;
+            }
+
+            .comparison-table {
+                overflow-x: auto;
+            }
+
+            .testimonial-card {
+                flex-direction: column;
+                padding: 30px 20px;
+                text-align: center;
+            }
+            
+            .testimonial-image img {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .testimonial-text {
+                font-size: 1rem;
+            }
+            
+            .testimonial-text::before {
+                font-size: 3rem;
+                top: -15px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            
+            .carousel-btn {
+                font-size: 2rem;
+                padding: 15px 20px;
+                width: 50px;
+                height: 50px;
+            }
+            
+            .carousel-btn.prev {
+                left: 10px;
+            }
+            
+            .carousel-btn.next {
+                right: 10px;
+            }
+            
+            .slides-wrapper {
+                min-height: 400px;
+            }
+
+            .combined-slide-container {
+                padding: 0 10px;
+            }
+            
+            .video-image-wrapper {
+                gap: 20px;
+            }
+            
+            .combined-slide-container .slide-image {
+                border-radius: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .testimonial-card {
+                padding: 20px 15px;
+            }
+            
+            .testimonial-text {
+                font-size: 0.95rem;
+            }
+
+            .video-image-wrapper {
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <section class="header-container">
+        <header>
+            <img src="assets/scan-test-logo2.png" alt="Logo">
+            <a href="https://calendly.com/contact-5892/30min" target="_blank" rel="noopener noreferrer" class="btn-calendly">Contacter un pro</a>
+        </header>
+    </section>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>
+                Révélez Votre <span class="highlight">Potentiel Caché</span><br>
+                Et Transformez Votre Vie
+            </h1>
+            <p>
+                Un test psychologique révolutionnaire alimenté par l'IA pour comprendre vos forces, 
+                vos blocages et votre chemin vers le succès
+            </p>
+            <div class="cta-buttons">
+                <a href="#pricing" class="btn-primary">Découvrir les Offres</a>
+                <a href="http://scantest-results.vercel.app/demo" class="btn-secondary">Voir la Démo</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section avec Carrousel Flexible -->
+    <section class="video-section" id="temoignages">
+        <h2>Découvrez Comment Scantest Change des Vies</h2>
+        <p>
+            Écoutez le témoignage de personnes qui ont transformé leur vie grâce à une meilleure 
+            connaissance d'eux-mêmes
+        </p>
+        
+        <div class="carousel-container">
+            <button class="carousel-btn prev" onclick="changeSlide(-1)">‹</button>
+            
+            <div class="slides-wrapper">
+                <!-- Slide 1 - Vidéo + Image (Lorenzo Pancino) -->
+                <div class="slide active" data-type="combined">
+                    <div class="combined-slide-container">
+                        <div class="video-image-wrapper">
+                            
+                            <!-- Vidéo avec nouveau conteneur -->
+                            <div class="combined-video-wrapper">
+                                <iframe 
+                                    src="https://www.youtube.com/embed/crsibcB9n7M?si=Xb2RxCK82IsThSWb" 
+                                    frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen>
+                                </iframe>
+                            </div>
+                            
+                            <!-- Séparateur 
+                            <div class="slide-separator">
+                                Recommandations de Lorenzo Pancino
+                            </div>
+                             -->
+                            
+                            <!-- Image -->
+                            <div class="image-wrapper">
+                                <img 
+                                    src="assets/lorenzo_recommendations.png" 
+                                    alt="Recommandations Lorenzo Pancino" 
+                                    class="slide-image"
+                                    loading="lazy"
+                                >
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slide 2 - Témoignage Texte -->
+                <div class="slide" data-type="text">
+                    <div class="testimonial-card">
+                        <div class="testimonial-image">
+                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop" alt="Marie Dupont">
+                        </div>
+                        <div class="testimonial-content">
+                            <div class="stars">★★★★★</div>
+                            <p class="testimonial-text">
+                                Scantest m'a permis de comprendre enfin pourquoi je réagissais de certaines manières. 
+                                J'ai découvert des forces que j'ignorais et j'ai pu travailler sur mes blocages. 
+                                Aujourd'hui, je me sens alignée avec mes valeurs et mes objectifs.
+                            </p>
+                            <div class="testimonial-author">
+                                <h4>Marie Dupont</h4>
+                                <p>Entrepreneure, 34 ans</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slide 3 - Vidéo seule -->
+                <div class="slide" data-type="video">
+                    <div class="video-container">
+                        <iframe 
+                            src="https://www.youtube.com/embed/crsibcB9n7M?si=Xb2RxCK82IsThSWb" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+                
+                <!-- Slide 4 - Témoignage Texte -->
+                <div class="slide" data-type="text">
+                    <div class="testimonial-card">
+                        <div class="testimonial-image">
+                            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop" alt="Thomas Martin">
+                        </div>
+                        <div class="testimonial-content">
+                            <div class="stars">★★★★★</div>
+                            <p class="testimonial-text">
+                                Le coaching premium a littéralement changé ma vie professionnelle. 
+                                Grâce à l'analyse détaillée et au suivi personnalisé, j'ai pu identifier 
+                                mes véritables talents et me réorienter vers une carrière qui me passionne vraiment.
+                            </p>
+                            <div class="testimonial-author">
+                                <h4>Thomas Martin</h4>
+                                <p>Consultant, 42 ans</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="carousel-btn next" onclick="changeSlide(1)">›</button>
+        </div>
+        
+        <div class="carousel-dots" id="carouselDots">
+            <!-- Les dots seront générés automatiquement -->
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section" id="pricing">
+        <h2>Choisissez Votre Parcours de Transformation</h2>
+        
+        <div class="pricing-cards">
+            <!-- Basic -->
+            <div class="pricing-card featured">
+                <span class="card-badge">Populaire</span>
+                <h3>Version Basic</h3>
+                <div class="price">140€</div>
+                <ul class="features-list">
+                    <li>11 indicateurs complets</li>
+                    <li>Commentaires approfondis</li>
+                    <li>Synthèse Globale par IA</li>
+                    <li>Analyse détaillée de votre personnalité</li>
+                    <li>Recommandations personnalisées</li>
+                </ul>
+                <button class="btn-card btn-featured" onclick="goToPayment()">
+                    Démarrer Maintenant
+                </button>
+            </div>
+
+            <!-- Premium -->
+            <div class="pricing-card premium">
+                <span class="card-badge premium-badge">Excellence</span>
+                <h3>Version Premium</h3>
+                <div class="price">240€</div>
+                <ul class="features-list">
+                    <li>11 indicateurs + commentaires</li>
+                    <li>Accès à une plateforme pédagogique</li>
+                    <li>Synthèse Globale IA avancée</li>
+                    <li>Accès à un coach conversationnel IA</li>
+                    <li>Coaching privé 45 min avec un professionnel qualifié</li>
+                    <li>Plan d'action personnalisé</li>
+                </ul>
+                <button class="btn-card btn-premium" onclick="goToPremiumPayment()">
+                    Coaching Premium
+                </button>
+            </div>
+
+            <!-- Premium 3 mois -->
+            <div class="pricing-card ultra-premium">
+                <span class="card-badge ultra-premium-badge">VIP</span>
+                <h3>Premium 3 Mois</h3>
+                <div class="price">997€</div>
+                <div class="payment-badge">💳 Paiement 3x sans frais</div>
+                <ul class="features-list">
+                    <li><strong>Tout le contenu Premium inclus</strong></li>
+                    <li>Coaching personnalisé sur 3 mois</li>
+                    <li>Suivi régulier avec votre coach</li>
+                    <li>Coaching de groupe</li>
+                    <li>Accompagnement dans vos transformations</li>
+                    <li>Support illimité par email</li>
+                    <li>Bilan final et plan d'évolution</li>
+                </ul>
+                <button class="btn-card btn-ultra-premium" onclick="goToUltraPremiumPayment()">
+                    Transformation Complète
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Table -->
+    <section class="comparison-section">
+        <h2>Tableau Comparatif des Offres</h2>
+        <div class="comparison-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fonctionnalité</th>
+                        <th>Basic</th>
+                        <th>Premium</th>
+                        <th>Premium 3 Mois</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Nombre d'indicateurs</td>
+                        <td>11</td>
+                        <td>11</td>
+                        <td>11</td>
+                    </tr>
+                    <tr>
+                        <td>Commentaires personnalisés</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                    </tr>
+                    <tr>
+                        <td>Synthèse Globale IA</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                    </tr>
+                    <tr>
+                        <td>Plateforme pédagogique</td>
+                        <td>✗</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                    </tr>
+                    <tr>
+                        <td>Coach conversationnel IA</td>
+                        <td>✗</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                    </tr>
+                    <tr>
+                        <td>Coaching avec professionnel</td>
+                        <td>✗</td>
+                        <td>45 min</td>
+                        <td>3 mois</td>
+                    </tr>
+                    <tr>
+                        <td>Support illimité</td>
+                        <td>✗</td>
+                        <td>✗</td>
+                        <td>✓</td>
+                    </tr>
+                    <tr>
+                        <td>Coaching de groupe</td>
+                        <td>✗</td>
+                        <td>✗</td>
+                        <td>12x 2h</td>
+                    </tr>
+                    <tr>
+                        <td class="version-name">Prix</td>
+                        <td class="version-name">140€</td>
+                        <td class="version-name">240€</td>
+                        <td class="version-name">997€</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Scantest. Tous droits réservés.</p>
+        <p>
+            <a href="https://calendly.com/contact-5892/30min" target="_blank">Prendre rendez-vous</a> | 
+            <a href="#">Mentions légales</a> | 
+            <a href="#">Politique de confidentialité</a>
+        </p>
+    </footer>
+
+    <script>
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        function goToPayment() {
+            window.location.href = 'https://scantest.learnybox.com/order-form/eyJmIjoxNzI5NzR9/';
+        }
+
+        function goToPremiumPayment() {
+            window.location.href = 'https://scantest.learnybox.com/order-form/eyJmIjoxNTIxOTl9/';
+        }
+
+        function goToUltraPremiumPayment() {
+            window.location.href = 'https://scantest.learnybox.com/order-form/eyJmIjoxNzI3MDR9/';
+        }
+
+        // Carrousel Flexible (Vidéos + Témoignages Texte + Combinés)
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        // Génération automatique des dots
+        function generateDots() {
+            const dotsContainer = document.getElementById('carouselDots');
+            dotsContainer.innerHTML = '';
+            
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.createElement('span');
+                dot.className = 'dot';
+                if (i === 0) dot.classList.add('active');
+                dot.onclick = () => goToSlide(i);
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            
+            if (currentSlide < 0) {
+                currentSlide = totalSlides - 1;
+            } else if (currentSlide >= totalSlides) {
+                currentSlide = 0;
+            }
+            
+            updateSlide();
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlide();
+        }
+
+        function updateSlide() {
+            // Masquer toutes les slides
+            slides.forEach(slide => {
+                slide.classList.remove('active');
+            });
+            
+            // Afficher la slide active
+            slides[currentSlide].classList.add('active');
+            
+            // Mettre à jour les dots
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
+        }
+
+        // Navigation au clavier
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                changeSlide(-1);
+            } else if (e.key === 'ArrowRight') {
+                changeSlide(1);
+            }
+        });
+
+        // Initialisation
+        generateDots();
+
+        // Animation on scroll pour les pricing cards
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.pricing-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'all 0.6s ease-out';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>

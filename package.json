@@ -1,0 +1,12 @@
+{
+  "name": "testchretien-results",
+  "version": "1.0.0",
+  "description": "Testchrétien Results - Secured Version",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.7"
+  }
+}
